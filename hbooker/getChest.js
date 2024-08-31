@@ -39,10 +39,15 @@ function CGet(url, params) {
 }
 async function hbooker() {
     let result = "【刺猬猫小说】：";
+    let maxIterations = 70;
+    let count = 0;
        msg = "" 
-    while (true) {
+    while (count < maxIterations) {
         let message = await CGet("/reader/get_message_sys_list_by_type", "count=10&message_type=3&page=0")
-        if (JSON.stringify(message).match("重新登录")) await require("./sendmsg")("刺猬猫宝箱："+"token失效单独通知")
+        if (JSON.stringify(message).match("重新登录")) {
+            console.log("刺猬猫token失效")
+            count = 70
+        }
         else if (message && message.data && message.data.message_sys_list) {
             cid = message.data.message_sys_list[0].chest_id
             if (cidArr.indexOf(cid) == -1) {
@@ -70,8 +75,7 @@ async function hbooker() {
                            if(openRes.code == 100000) msg = openRes.data.item_name.match(/经验值/)?("经验值 * "+openRes.data.item_num) :(openRes.data.item_name +" * "+openRes.data.item_num      )                                       
                            else msg = openRes.tip
                              console.log(">>>>结果：" + msg )
-                             await CGet("/bookshelf/delete_shelf_book", "shelf_id=&book_id=" + bid)
-//                             await require("./sendmsg")("刺猬猫宝箱："+ msg)                          
+                             await CGet("/bookshelf/delete_shelf_book", "shelf_id=&book_id=" + bid)         
                         } else {
                             console.log(">>>>该宝箱开过啦")
                             cidArr.push(cid)
@@ -82,6 +86,7 @@ async function hbooker() {
         } else console.log(">>>>错误：" + message.tip)
         console.log(">>>>骚等    "+"[ "+new Date().toLocaleString()+ " ]\n\n ")
         await sleep(1000 * 60 * 5)
+        count++
     }
 }
 
