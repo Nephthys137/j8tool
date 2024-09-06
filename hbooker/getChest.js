@@ -39,14 +39,16 @@ function CGet(url, params) {
 }
 async function hbooker() {
     let result = "【刺猬猫小说】：";
-    let maxIterations = 70;
+    let runtime = 1000 * (5 * 3600 + 55 * 60);
+    let sleeptime = 1000 * 60;
+    let maxIterations = Math.floor(runtime / sleeptime);
     let count = 0;
        msg = "" 
     while (count < maxIterations) {
         let message = await CGet("/reader/get_message_sys_list_by_type", "count=10&message_type=3&page=0")
         if (JSON.stringify(message).match("重新登录")) {
             console.log("刺猬猫token失效")
-            count = 70
+            count = maxIterations
         }
         else if (message && message.data && message.data.message_sys_list) {
             cid = message.data.message_sys_list[0].chest_id
@@ -84,8 +86,7 @@ async function hbooker() {
                 } else console.log(">>该宝箱过期啦")
             } else console.log(">>该宝箱开过啦，目前没有新の宝箱")
         } else console.log(">>>>错误：" + message.tip)
-        console.log(">>>>骚等    "+"[ "+new Date().toLocaleString()+ " ]\n\n ")
-        await sleep(1000 * 60 * 5)
+        await sleep(sleeptime)
         count++
     }
 }
