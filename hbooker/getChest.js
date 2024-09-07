@@ -39,7 +39,7 @@ function CGet(url, params) {
 }
 async function hbooker() {
     let result = "【刺猬猫小说】：";
-    let runtime = 1000 * (5 * 3600 + 55 * 60);
+    let runtime = 1000 * (5 * 3600 + 50 * 60);
     let sleeptime = 1000 * 60;
     let maxIterations = Math.floor(runtime / sleeptime);
     let count = 0;
@@ -62,14 +62,12 @@ async function hbooker() {
                         bid = chestInfo.book_info.book_id
                         zt = chestInfo.rest_num
                         if (chestInfo.has_opened == 0) {
-                            console.log(`>>剩余${chestInfo.rest_num}份`)
-                            console.log(">>去开宝箱")
+                            console.log(`>>剩余${chestInfo.rest_num}份,去开宝箱`)
                             await CGet("/bookshelf/favor", "shelf_id=&book_id=" + bid)
                             openRes = await CGet("/chest/open_chest", `chest_id=${cid}`)                        
                             errorwen = openRes.error
                             await CGet("/bookshelf/favor", "shelf_id=&book_id=" + bid)                      
                              while(errorwen) {
-                                console.log(">>去开宝箱")
                                 openRes = await CGet("/chest/open_chest", `chest_id=${cid}`)
                                 await sleep(1000)
                                 if (!openRes.errorwen) errorwen = false
@@ -79,12 +77,11 @@ async function hbooker() {
                              console.log(">>>>结果：" + msg )
                              await CGet("/bookshelf/delete_shelf_book", "shelf_id=&book_id=" + bid)         
                         } else {
-                            console.log(">>>>该宝箱开过啦")
                             cidArr.push(cid)
                         }
                     } else console.log(chestInfo)
-                } else console.log(">>该宝箱过期啦")
-            } else console.log(">>该宝箱开过啦，目前没有新の宝箱")
+                }
+            }
         } else console.log(">>>>错误：" + message.tip)
         await sleep(sleeptime)
         count++
